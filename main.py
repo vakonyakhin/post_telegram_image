@@ -3,7 +3,7 @@ import requests
 import os
 import time
 import random
-from pathlib import Path
+
 
 import telegram
 from telegram.ext import Updater, Dispatcher, MessageHandler, CommandHandler
