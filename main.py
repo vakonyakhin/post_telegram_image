@@ -22,6 +22,12 @@ def text(update, context):
     )
 
 
+def unknow(update, context):
+    update.message.reply_text(
+        'Я не понимаю текст и не веду беседу. Завтра будет новое фото.'
+    )
+
+
 def download_image(url, name, directory='images/'):
     response = requests.get(url)
     response.raise_for_status
@@ -32,7 +38,7 @@ def download_image(url, name, directory='images/'):
             image.write(response.content)
 
 
-def get_nasa_images(url, key):
+def get_nasa_api_data(url, key):
     delta = 30
     time_delta = timedelta(days=delta)
     params = {
@@ -45,6 +51,15 @@ def get_nasa_images(url, key):
 
     nasa_content = response.json()
     return nasa_content
+
+
+def get_spaceX_api_data(url):
+    response = requests.get(url)
+    response.raise_for_status()
+
+    image_urls = response.json()['links']['flickr_images']
+
+    return image_urls
 
 
 def find_image(directory='images/'):
@@ -66,24 +81,31 @@ def main():
 
     nasa_key = os.getenv('NASA_API_KEY')
     nasa_url = 'https://api.nasa.gov/planetary/apod'
-    name_nasa = '_nasa.jpg'
-
-    name_spacex = '_spaceX.jpg'
+    
     launch_spacex = random.randint(1, 100)
     spacex_url = f'https://api.spacexdata.com/v3/launches/{launch_spacex}'
+    
     directory = 'images/'
+    name_nasa = '_nasa.jpg'
+    name_spacex = 'spaceX'
+    format_file = '.jpg'
 
     updater = Updater(tg_token, use_context=True)
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler('start', start))
-    dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), text))
+    dispatcher.add_handler(MessageHandler(Filters.text, text))
+    dispatcher.add_handler(CommandHandler(Filters.command, unknow))
 
     if not os.path.exists(directory):
         os.mkdir(directory)
 
-    nasa_content = get_nasa_images(nasa_url, nasa_key)
+    nasa_content = get_nasa_api_data(nasa_url, nasa_key)
     for image in nasa_content:
-        download_image(image['url'], f'{image["date"]}{name_nasa}')
+        download_image(image['url'], f'{name_nasa}{image["date"]}{format_file}')
+
+    spacex_content = get_spaceX_api_data(spacex_url)
+    for num_url, url in enumerate(spacex_content):
+          download_image(url, f'{name_spacex}{num_url}{format_file}')
 
     while True:
         image = find_image()
