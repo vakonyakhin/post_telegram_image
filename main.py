@@ -23,8 +23,8 @@ def download_image(url, name, directory='images/'):
     response = requests.get(url)
     response.raise_for_status
 
-    image = Path(f'{directory}{name}')
-    if not image.exists():
+    image = f'{directory}{name}'
+    if not os.path.exists(image):
         with open(f'{directory}{name}', 'wb') as image:
             image.write(response.content)
 
