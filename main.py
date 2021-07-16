@@ -4,7 +4,6 @@ import os
 import time
 import random
 
-
 import telegram
 from telegram.ext import Updater, Dispatcher, MessageHandler, CommandHandler
 from telegram.ext import CallbackContext
@@ -12,11 +11,15 @@ from telegram.ext import Filters
 
 
 def start(update, context):
-    update.message.reply_text('Поехали. Буду присылать по одной фотографии каждый день')
+    update.message.reply_text(
+        'Поехали. Буду присылать по одной фотографии каждый день.'
+    )
 
 
 def text(update, context):
-    update.message.reply_text('Я не понимаю текст и не веду беседу. Завтра будет новое фото.')
+    update.message.reply_text(
+        'Я не понимаю текст и не веду беседу. Завтра будет новое фото.'
+    )
 
 
 def download_image(url, name, directory='images/'):
@@ -30,30 +33,31 @@ def download_image(url, name, directory='images/'):
 
 
 def get_nasa_images(url, key):
-  delta = 30
-  time_delta = timedelta(days=delta)
-  params = {
-      'api_key': key,
-      'start_date': date.today() - time_delta,
-      'end_date': date.today(),
-  }
-  response = requests.get(url, params=params)
-  response.raise_for_status()
+    delta = 30
+    time_delta = timedelta(days=delta)
+    params = {
+        'api_key': key,
+        'start_date': date.today() - time_delta,
+        'end_date': date.today(),
+    }
+    response = requests.get(url, params=params)
+    response.raise_for_status()
 
-  nasa_content = response.json()
-  return nasa_content
+    nasa_content = response.json()
+    return nasa_content
 
 
 def find_image(directory='images/'):
     images = os.listdir(directory)
-    
-    for image_num,image in enumerate(images):
+
+    for image_num, image in enumerate(images):
         with open(directory + image, 'rb') as image:
             return image.read()
 
 
 def post_image(update, chat_id, image):
     update.bot.send_photo(chat_id, image)
+
 
 def main():
 
@@ -75,7 +79,7 @@ def main():
     dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), text))
 
     if not os.path.exists(directory):
-       os.mkdir(directory)
+        os.mkdir(directory)
 
     nasa_content = get_nasa_images(nasa_url, nasa_key)
     for image in nasa_content:
@@ -86,12 +90,6 @@ def main():
         post_image(updater, chat_id, image)
         time.sleep(10)
 
+
 if __name__ == '__main__':
     main()
-  
-  
-
-
-
-
-
