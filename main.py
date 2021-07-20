@@ -59,9 +59,8 @@ def get_spaceX_api_data(url):
 def find_image(directory='images/'):
     images = os.listdir(directory)
 
-    for image_num, image in enumerate(images):
-        with open(directory + image, 'rb') as image:
-            return image.read()
+    for image in images:
+        yield image
 
 
 def post_image(update, chat_id, image):
@@ -80,7 +79,7 @@ def main():
     spacex_url = f'https://api.spacexdata.com/v3/launches/{launch_spacex}'
     
     directory = 'images/'
-    name_nasa = '_nasa.jpg'
+    name_nasa = 'nasa_'
     name_spacex = 'spaceX'
     format_file = '.jpg'
 
@@ -94,18 +93,26 @@ def main():
         os.mkdir(directory)
 
     nasa_content = get_nasa_api_data(nasa_url, nasa_key)
+     
     for image in nasa_content:
-        download_image(image['url'], f'{name_nasa}{image["date"]}{format_file}')
+        if image['media_type'] == 'image':
+            download_image(image['url'], f'{name_nasa}{image["date"]}{format_file}')
 
     spacex_content = get_spaceX_api_data(spacex_url)
     if spacex_content:
         for num_url, url in enumerate(spacex_content):
             download_image(url, f'{name_spacex}{num_url}{format_file}')
-    
+
+    images = find_image()
     while True:
-        image = find_image()
-        post_image(updater, chat_id, image)
-        time.sleep(10)
+        try:
+            image = next(images)
+            with open(f'{directory}{image}', 'rb') as posted_image:
+                post_image(updater, chat_id, posted_image)
+            time.sleep(86400)
+        except StopIteration:
+            updater.bot.send_message(chat_id, 'Фоток больше нет')
+            break
 
 
 if __name__ == '__main__':
