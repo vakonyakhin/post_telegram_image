@@ -89,8 +89,7 @@ def main():
     dispatcher.add_handler(MessageHandler(Filters.text, return_text))
     
 
-    if not os.path.exists(directory):
-        os.mkdir(directory)
+    os.makedirs(directory)
     
     nasa_content = get_nasa_api_content(nasa_url, nasa_key)
      
