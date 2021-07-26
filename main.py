@@ -71,7 +71,7 @@ def post_image(update, chat_id, image):
 
 def main():
     load_dotenv()
-    tg_chat_id = os.getenv('CHAT_ID')
+    tg_chat_id = os.getenv('TG_CHAT_ID')
     tg_token = os.getenv('TG_KEY')
 
     nasa_key = os.getenv('NASA_API_KEY')
