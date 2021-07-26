@@ -28,13 +28,13 @@ def download_image(url, name, directory='images/'):
     response = requests.get(url)
     response.raise_for_status
 
-    image = f'{directory}{name}'
+    image_path = f'{directory}{name}'
     
-    with open(image, 'wb') as image:
+    with open(image_path, 'wb') as image:
         image.write(response.content)
 
 
-def get_nasa_api_data(url, key):
+def get_nasa_api_content(url, api_key):
     delta = 30
     time_delta = timedelta(days=delta)
     params = {
@@ -49,7 +49,7 @@ def get_nasa_api_data(url, key):
     return nasa_content
 
 
-def get_spaceX_api_data(url):
+def get_spaceX_api_content(url):
     response = requests.get(url)
     response.raise_for_status()
 
@@ -94,13 +94,13 @@ def main():
     if not os.path.exists(directory):
         os.mkdir(directory)
 
-    nasa_content = get_nasa_api_data(nasa_url, nasa_key)
+    nasa_content = get_nasa_api_content(nasa_url, nasa_key)
      
     for image in nasa_content:
         if image['media_type'] == 'image':
             download_image(image['url'], f'{name_nasa}{image["date"]}{format_file}')
 
-    spacex_content = get_spaceX_api_data(spacex_url)
+    spacex_content = get_spaceX_api_content(spacex_url)
     if spacex_content:
         for num_url, url in enumerate(spacex_content):
             download_image(url, f'{name_spacex}{num_url}{format_file}')
