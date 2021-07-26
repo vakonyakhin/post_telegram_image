@@ -49,7 +49,7 @@ def get_nasa_api_content(url, api_key):
     return nasa_content
 
 
-def get_spaceX_api_content(url):
+def get_spacex_api_content(url):
     response = requests.get(url)
     response.raise_for_status()
 
@@ -100,7 +100,7 @@ def main():
         if image['media_type'] == 'image':
             download_image(image['url'], f'{name_nasa}{image["date"]}{format_file}')
 
-    spacex_content = get_spaceX_api_content(spacex_url)
+    spacex_content = get_spacex_api_content(spacex_url)
     if spacex_content:
         for num_url, url in enumerate(spacex_content):
             download_image(url, f'{name_spacex}{num_url}{format_file}')
