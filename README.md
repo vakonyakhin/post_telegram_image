@@ -31,7 +31,7 @@ from dotenv import load_dotenv
  
 load_dotenv()
  
-chat_id = os.getenv('CHAT_ID')
+tg_chat_id = os.getenv('TG_CHAT_ID')
     
 tg_token = os.getenv('TG_KEY')
 
