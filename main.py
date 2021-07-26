@@ -79,9 +79,9 @@ def main():
     spacex_url = f'https://api.spacexdata.com/v3/launches/{launch_spacex}'
     
     directory = 'images/'
-    name_nasa = 'nasa_'
-    name_spacex = 'spaceX'
-    format_file = '.jpg'
+    nasa_image_prefix = 'nasa_'
+    spacex_image_prefix = 'spaceX'
+    file_format = '.jpg'
 
     updater = Updater(tg_token, use_context=True)
     dispatcher = updater.dispatcher
@@ -89,18 +89,19 @@ def main():
     dispatcher.add_handler(MessageHandler(Filters.text, return_text))
     
 
-    os.makedirs(directory)
+    if not os.path.exists(directory):
+        os.mkdir(directory)
     
     nasa_content = get_nasa_api_content(nasa_url, nasa_key)
      
     for image in nasa_content:
         if image['media_type'] == 'image':
-            download_image(image['url'], f'{name_nasa}{image["date"]}{format_file}')
+            download_image(image['url'], f'{nasa_image_prefix}{image["date"]}{file_format}')
 
     spacex_content = get_spacex_api_content(spacex_url)
     if spacex_content:
-        for num_url, url in enumerate(spacex_content):
-            download_image(url, f'{name_spacex}{num_url}{format_file}')
+        for url_count, url in enumerate(spacex_content):
+            download_image(url, f'{spacex_image_prefix}{url_count}{file_format}')
 
     images = find_image()
     while True:
