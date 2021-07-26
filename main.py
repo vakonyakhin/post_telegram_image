@@ -8,7 +8,9 @@ import telegram
 from telegram.ext import Updater, Dispatcher, MessageHandler, CommandHandler
 from telegram.ext import CallbackContext
 from telegram.ext import Filters
-
+from dotenv import load_dotenv
+    
+    
 
 def start(update, context):
     update.message.reply_text(
@@ -16,7 +18,7 @@ def start(update, context):
     )
 
 
-def text(update, context):
+def return_text(update, context):
     update.message.reply_text(
         'Я не понимаю текст и не веду беседу. Завтра будет новое фото.'
     )
@@ -68,7 +70,7 @@ def post_image(update, chat_id, image):
 
 
 def main():
-
+    load_dotenv()
     chat_id = os.getenv('CHAT_ID')
     tg_token = os.getenv('TG_KEY')
 
@@ -86,7 +88,7 @@ def main():
     updater = Updater(tg_token, use_context=True)
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler('start', start))
-    dispatcher.add_handler(MessageHandler(Filters.text, text))
+    dispatcher.add_handler(MessageHandler(Filters.text, return_text))
     
 
     if not os.path.exists(directory):
