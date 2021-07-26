@@ -38,7 +38,7 @@ def get_nasa_api_content(url, api_key):
     delta = 30
     time_delta = timedelta(days=delta)
     params = {
-        'api_key': key,
+        'api_key': api_key,
         'start_date': date.today() - time_delta,
         'end_date': date.today(),
     }
@@ -71,7 +71,7 @@ def post_image(update, chat_id, image):
 
 def main():
     load_dotenv()
-    chat_id = os.getenv('CHAT_ID')
+    tg_chat_id = os.getenv('CHAT_ID')
     tg_token = os.getenv('TG_KEY')
 
     nasa_key = os.getenv('NASA_API_KEY')
@@ -110,10 +110,10 @@ def main():
         try:
             image = next(images)
             with open(f'{directory}{image}', 'rb') as posted_image:
-                post_image(updater, chat_id, posted_image)
+                post_image(updater, tg_chat_id, posted_image)
             time.sleep(86400)
         except StopIteration:
-            updater.bot.send_message(chat_id, 'Фоток больше нет')
+            updater.bot.send_message(tg_chat_id, 'Фоток больше нет')
             break
 
 
