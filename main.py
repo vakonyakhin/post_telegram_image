@@ -6,12 +6,10 @@ import random
 
 import telegram
 from telegram.ext import Updater, Dispatcher, MessageHandler, CommandHandler
-from telegram.ext import CallbackContext
 from telegram.ext import Filters
 from dotenv import load_dotenv
     
     
-
 def start(update, context):
     update.message.reply_text(
         'Поехали. Буду присылать по одной фотографии каждый день.'
@@ -91,9 +89,8 @@ def main():
     dispatcher.add_handler(MessageHandler(Filters.text, return_text))
     
 
-    if not os.path.exists(directory):
-        os.mkdir(directory)
-
+    os.makedirs(directory)
+    
     nasa_content = get_nasa_api_content(nasa_url, nasa_key)
      
     for image in nasa_content:
