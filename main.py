@@ -29,9 +29,9 @@ def download_image(url, name, directory='images/'):
     response.raise_for_status
 
     image = f'{directory}{name}'
-    if not os.path.exists(image):
-        with open(f'{directory}{name}', 'wb') as image:
-            image.write(response.content)
+    
+    with open(image, 'wb') as image:
+        image.write(response.content)
 
 
 def get_nasa_api_data(url, key):
