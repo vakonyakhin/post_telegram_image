@@ -56,13 +56,6 @@ def get_spacex_api_content(url):
     return image_urls
 
 
-def find_image(directory='images/'):
-    images = os.listdir(directory)
-
-    for image in images:
-        yield image
-
-
 def post_image(update, chat_id, image):
     update.bot.send_photo(chat_id, image)
 
@@ -102,16 +95,11 @@ def main():
         for url_count, url in enumerate(spacex_content):
             download_image(url, f'{spacex_image_prefix}{url_count}{file_format}')
 
-    images = find_image()
     while True:
-        try:
-            image = next(images)
-            with open(f'{directory}{image}', 'rb') as posted_image:
-                post_image(updater, tg_chat_id, posted_image)
-            time.sleep(86400)
-        except StopIteration:
-            updater.bot.send_message(tg_chat_id, 'Фоток больше нет')
-            break
+        
+        for image in os.listdir(directory):
+              post_image(updater, tg_chat_id, image)
+              time.sleep(10)
 
 
 if __name__ == '__main__':
