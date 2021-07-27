@@ -82,7 +82,7 @@ def main():
     dispatcher.add_handler(MessageHandler(Filters.text, return_text))
     
 
-    os.makedirs(directory)
+    os.makedirs(directory, exist_ok=True)
     
     nasa_content = get_nasa_api_content(nasa_url, nasa_key)
      
@@ -98,8 +98,9 @@ def main():
     while True:
         
         for image in os.listdir(directory):
-              post_image(updater, tg_chat_id, image)
-              time.sleep(10)
+            with open(f'{directory}{image}', 'rb') as posted_image:
+                updater.bot.send_photo(tg_chat_id, posted_image)
+            time.sleep(10)
 
 
 if __name__ == '__main__':
