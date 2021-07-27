@@ -77,7 +77,7 @@ def post_images(updater, chat_id, directory='images/'):
             print(image)
             with open(f'{directory}{image}', 'rb') as posted_image:
                 updater.bot.send_photo(chat_id, posted_image)
-            time.sleep(3)
+            time.sleep(86400)
 
 
 def main():
