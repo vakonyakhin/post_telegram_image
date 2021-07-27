@@ -8,8 +8,8 @@ import telegram
 from telegram.ext import Updater, Dispatcher, MessageHandler, CommandHandler
 from telegram.ext import Filters
 from dotenv import load_dotenv
-    
-    
+
+
 def start(update, context):
     update.message.reply_text(
         'Поехали. Буду присылать по одной фотографии каждый день.'
@@ -27,12 +27,12 @@ def download_image(url, name, directory='images/'):
     response.raise_for_status
 
     image_path = f'{directory}{name}'
-    
+
     with open(image_path, 'wb') as image:
         image.write(response.content)
 
 
-def get_nasa_api_content(url, api_key):
+def get_nasa_api_content(url, api_key, prefix='nasa_', format='.jpg'):
     delta = 30
     time_delta = timedelta(days=delta)
     params = {
@@ -44,20 +44,40 @@ def get_nasa_api_content(url, api_key):
     response.raise_for_status()
 
     nasa_content = response.json()
-    return nasa_content
+
+    for image in nasa_content:
+        if image['media_type'] == 'image':
+            download_image(image['url'], f'{prefix}{image["date"]}{format}')
 
 
-def get_spacex_api_content(url):
+def get_spacex_api_content(url, image_prefix='spacex', file_format='.jpg'):
     response = requests.get(url)
     response.raise_for_status()
 
     image_urls = response.json()['links']['flickr_images']
 
-    return image_urls
+    for url_count, url in enumerate(image_urls):
+            download_image(url, f'{image_prefix}{url_count}{file_format}')
 
 
-def post_image(update, chat_id, image):
-    update.bot.send_photo(chat_id, image)
+def start_tg_settings(token):
+    updater = Updater(token, use_context=True)
+    dispatcher = updater.dispatcher
+    dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(MessageHandler(Filters.text, return_text))
+
+    return updater
+
+
+def post_images(updater, chat_id, directory='images/'):
+    images = os.listdir(directory)
+    while True:
+
+        for image in images:
+            print(image)
+            with open(f'{directory}{image}', 'rb') as posted_image:
+                updater.bot.send_photo(chat_id, posted_image)
+            time.sleep(3)
 
 
 def main():
@@ -67,41 +87,26 @@ def main():
 
     nasa_key = os.getenv('NASA_API_KEY')
     nasa_url = 'https://api.nasa.gov/planetary/apod'
-    
+
     launch_spacex = random.randint(1, 100)
     spacex_url = f'https://api.spacexdata.com/v3/launches/{launch_spacex}'
-    
+
     directory = 'images/'
-    nasa_image_prefix = 'nasa_'
-    spacex_image_prefix = 'spaceX'
-    file_format = '.jpg'
 
     updater = Updater(tg_token, use_context=True)
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler('start', start))
     dispatcher.add_handler(MessageHandler(Filters.text, return_text))
-    
 
     os.makedirs(directory, exist_ok=True)
-    
-    nasa_content = get_nasa_api_content(nasa_url, nasa_key)
-     
-    for image in nasa_content:
-        if image['media_type'] == 'image':
-            download_image(image['url'], f'{nasa_image_prefix}{image["date"]}{file_format}')
 
-    spacex_content = get_spacex_api_content(spacex_url)
-    if spacex_content:
-        for url_count, url in enumerate(spacex_content):
-            download_image(url, f'{spacex_image_prefix}{url_count}{file_format}')
+    updater = start_tg_settings(tg_token)
 
-    while True:
-        
-        for image in os.listdir(directory):
-            with open(f'{directory}{image}', 'rb') as posted_image:
-                updater.bot.send_photo(tg_chat_id, posted_image)
-            time.sleep(10)
+    get_nasa_api_content(nasa_url, nasa_key)
+    get_spacex_api_content(spacex_url)
+
+    post_images(updater, tg_chat_id)
 
 
 if __name__ == '__main__':
-    main()
+  main()
