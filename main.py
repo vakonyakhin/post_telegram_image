@@ -88,13 +88,7 @@ def main():
 
     launch_number = random.randint(1, 100)
     spacex_url = f'https://api.spacexdata.com/v3/launches/{launch_number}'
-
     directory = 'images/'
-
-    updater = Updater(tg_token, use_context=True)
-    dispatcher = updater.dispatcher
-    dispatcher.add_handler(CommandHandler('start', start))
-    dispatcher.add_handler(MessageHandler(Filters.text, return_text))
 
     os.makedirs(directory, exist_ok=True)
 
