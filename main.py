@@ -86,8 +86,8 @@ def main():
     nasa_key = os.getenv('NASA_API_KEY')
     nasa_url = 'https://api.nasa.gov/planetary/apod'
 
-    launch_spacex = random.randint(1, 100)
-    spacex_url = f'https://api.spacexdata.com/v3/launches/{launch_spacex}'
+    launch_number = random.randint(1, 100)
+    spacex_url = f'https://api.spacexdata.com/v3/launches/{launch_number}'
 
     directory = 'images/'
 
