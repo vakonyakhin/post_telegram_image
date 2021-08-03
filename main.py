@@ -24,7 +24,7 @@ def return_text(update, context):
 
 def download_image(url, name, directory='images/'):
     response = requests.get(url)
-    response.raise_for_status
+    response.raise_for_status()
 
     image_path = f'{directory}{name}'
 
