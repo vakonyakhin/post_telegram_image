@@ -57,7 +57,7 @@ def get_spacex_api_content(url, image_prefix='spacex', file_format='.jpg'):
     image_urls = response.json()['links']['flickr_images']
 
     for url_count, url in enumerate(image_urls):
-            download_image(url, f'{image_prefix}{url_count}{file_format}')
+        download_image(url, f'{image_prefix}{url_count}{file_format}')
 
 
 def start_tg_settings(token):
@@ -101,4 +101,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+    main()
