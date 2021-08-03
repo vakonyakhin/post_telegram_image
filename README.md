@@ -24,7 +24,7 @@ tg_chat_id = os.getenv('TG_CHAT_ID') - ID чата. Можно получить 
  
 ## Пример запуcка
  
-``
+```
 from dotenv import load_dotenv
  
 load_dotenv()
