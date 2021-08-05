@@ -32,7 +32,7 @@ def download_image(url, name, directory='images/'):
         image.write(response.content)
 
 
-def get_nasa_api_content(url, api_key, prefix='nasa_', format='.jpg'):
+def fetch_nasa_images(url, api_key, directory):
     delta = 30
     time_delta = timedelta(days=delta)
     params = {
@@ -44,23 +44,35 @@ def get_nasa_api_content(url, api_key, prefix='nasa_', format='.jpg'):
     response.raise_for_status()
 
     nasa_content = response.json()
-
     for image in nasa_content:
         if image['media_type'] == 'image':
-            download_image(image['url'], f'{prefix}{image["date"]}{format}')
+            response = requests.get(image['url'])
+            response.raise_for_status()
+            file_format = os.path.splitext(image['url'])
+            print(file_format)
+            image_path = f'{directory}nasa_{image["date"]}{file_format[1]}'
+
+            with open(image_path, 'wb') as image:
+                image.write(response.content)
 
 
-def get_spacex_api_content(url, image_prefix='spacex', file_format='.jpg'):
+def fetch_spacex_launnch_images(url, directory, file_format='.jpg'):
     response = requests.get(url)
     response.raise_for_status()
 
     image_urls = response.json()['links']['flickr_images']
 
     for url_count, url in enumerate(image_urls):
-        download_image(url, f'{image_prefix}{url_count}{file_format}')
+        response = requests.get(url)
+        response.raise_for_status()
+
+        image_path = f'{directory}spacex{url_count}{file_format}'
+
+        with open(image_path, 'wb') as image:
+            image.write(response.content)
 
 
-def start_tg_settings(token):
+def setup_tg_bot(token):
     updater = Updater(token, use_context=True)
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler('start', start))
@@ -92,10 +104,10 @@ def main():
 
     os.makedirs(directory, exist_ok=True)
 
-    updater = start_tg_settings(tg_token)
+    updater = setup_tg_bot(tg_token)
 
-    get_nasa_api_content(nasa_url, nasa_key)
-    get_spacex_api_content(spacex_url)
+    fetch_nasa_images(nasa_url, nasa_key, directory)
+    fetch_spacex_launnch_images(spacex_url, directory)
 
     post_images(updater, tg_chat_id)
 
