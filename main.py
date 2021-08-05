@@ -99,7 +99,7 @@ def main():
     fetch_nasa_images(nasa_url, nasa_key, directory)
     fetch_spacex_launnch_images(spacex_url, directory)
 
-    post_images(updater, tg_chat_id)
+    post_images(updater, tg_chat_id, directory)
 
 
 if __name__ == '__main__':
