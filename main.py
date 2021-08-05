@@ -22,16 +22,6 @@ def return_text(update, context):
     )
 
 
-def download_image(url, name, directory='images/'):
-    response = requests.get(url)
-    response.raise_for_status()
-
-    image_path = f'{directory}{name}'
-
-    with open(image_path, 'wb') as image:
-        image.write(response.content)
-
-
 def fetch_nasa_images(url, api_key, directory):
     delta = 30
     time_delta = timedelta(days=delta)
