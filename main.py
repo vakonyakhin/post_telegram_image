@@ -71,7 +71,7 @@ def setup_tg_bot(token):
     return updater
 
 
-def post_images(updater, chat_id, directory='images/'):
+def post_images(updater, chat_id, directory):
     images = os.listdir(directory)
     while True:
         for image in images:
