@@ -39,7 +39,7 @@ def fetch_nasa_images(url, api_key, directory):
             response = requests.get(image['url'])
             response.raise_for_status()
             file_format = os.path.splitext(image['url'])
-            print(file_format)
+            
             image_path = f'{directory}nasa_{image["date"]}{file_format[1]}'
 
             with open(image_path, 'wb') as image:
