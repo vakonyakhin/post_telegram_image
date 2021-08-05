@@ -75,8 +75,8 @@ def post_images(updater, chat_id, directory):
     images = os.listdir(directory)
     while True:
         for image in images:
-            with open(f'{directory}{image}', 'rb') as posted_image:
-                updater.bot.send_photo(chat_id, posted_image)
+            with open(f'{directory}{image}', 'rb') as being_sent_image:
+                updater.bot.send_photo(chat_id, being_sent_image)
             time.sleep(86400)
 
 
