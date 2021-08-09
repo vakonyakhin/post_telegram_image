@@ -22,6 +22,21 @@ def return_text(update, context):
     )
 
 
+def download_image(url, name, path):
+    responce = requests.get(url)
+    responce.raise_for_status()
+    file_format = get_file_format(url)
+    image_path = f'{path}{name}{file_format}'
+
+    with open(image_path, 'wb') as image:
+        image.write(responce.content)
+
+
+def get_file_format(url):
+    
+    return os.path.splitext(url)[1]
+
+
 def fetch_nasa_images(url, api_key, directory):
     delta = 30
     time_delta = timedelta(days=delta)
@@ -36,30 +51,17 @@ def fetch_nasa_images(url, api_key, directory):
     nasa_content = response.json()
     for image in nasa_content:
         if image['media_type'] == 'image':
-            response = requests.get(image['url'])
-            response.raise_for_status()
-            file_format = os.path.splitext(image['url'])
-            
-            image_path = f'{directory}nasa_{image["date"]}{file_format[1]}'
-
-            with open(image_path, 'wb') as image:
-                image.write(response.content)
+            download_image(image['url'],f'nasa_{image["date"]}', directory)
 
 
-def fetch_spacex_launnch_images(url, directory, file_format='.jpg'):
+def fetch_spacex_launch_images(url, directory):
     response = requests.get(url)
     response.raise_for_status()
 
     image_urls = response.json()['links']['flickr_images']
 
     for url_count, url in enumerate(image_urls):
-        response = requests.get(url)
-        response.raise_for_status()
-
-        image_path = f'{directory}spacex{url_count}{file_format}'
-
-        with open(image_path, 'wb') as image:
-            image.write(response.content)
+        download_image(url, f'spacex{url_count}', directory)
 
 
 def setup_tg_bot(token):
