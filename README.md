@@ -24,18 +24,6 @@ tg_chat_id = os.getenv('TG_CHAT_ID') - ID чата. Можно получить 
  
 ## Пример запуcка
  
-```
-from dotenv import load_dotenv
- 
-load_dotenv()
- 
-tg_chat_id = os.getenv('TG_CHAT_ID')
-    
-tg_token = os.getenv('TG_KEY')
-
-nasa_key = os.getenv('NASA_API_KEY')
-```
- 
 Запуск осуществляется из IDE или из командной строки командой
 ```
 python main.py
