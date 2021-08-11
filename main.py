@@ -3,6 +3,7 @@ import requests
 import os
 import time
 import random
+from urllib.parse import urlparse
 
 import telegram
 from telegram.ext import Updater, Dispatcher, MessageHandler, CommandHandler
@@ -27,14 +28,15 @@ def download_image(url, name, path):
     responce.raise_for_status()
     file_format = get_file_format(url)
     image_path = f'{path}{name}{file_format}'
-
     with open(image_path, 'wb') as image:
         image.write(responce.content)
 
 
 def get_file_format(url):
-    
-    return os.path.splitext(url)[1]
+    url_parse = urlparse(url)
+    file_name = os.path.split(url_parse.path)[1]
+    file_format = os.path.splitext(file_name)[1]
+    return file_format
 
 
 def fetch_nasa_images(url, api_key, directory):
@@ -54,7 +56,7 @@ def fetch_nasa_images(url, api_key, directory):
             download_image(image['url'],f'nasa_{image["date"]}', directory)
 
 
-def fetch_spacex_launch_images(url, directory):
+def fetch_spacex_launnch_images(url, directory):
     response = requests.get(url)
     response.raise_for_status()
 
