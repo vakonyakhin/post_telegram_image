@@ -56,7 +56,7 @@ def fetch_nasa_images(url, api_key, directory):
             download_image(image['url'],f'nasa_{image["date"]}', directory)
 
 
-def fetch_spacex_launnch_images(url, directory):
+def fetch_spacex_launch_images(url, directory):
     response = requests.get(url)
     response.raise_for_status()
 
@@ -100,7 +100,7 @@ def main():
     updater = setup_tg_bot(tg_token)
 
     fetch_nasa_images(nasa_url, nasa_key, directory)
-    fetch_spacex_launnch_images(spacex_url, directory)
+    fetch_spacex_launch_images(spacex_url, directory)
     post_images(updater, tg_chat_id, directory)
 
 
