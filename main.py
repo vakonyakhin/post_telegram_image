@@ -3,7 +3,7 @@ import requests
 import os
 import time
 import random
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 
 import telegram
 from telegram.ext import Updater, Dispatcher, MessageHandler, CommandHandler
@@ -26,17 +26,17 @@ def return_text(update, context):
 def download_image(url, name, path):
     responce = requests.get(url)
     responce.raise_for_status()
-    file_format = get_file_format(url)
+    file_format = get_file_extention(url)
     image_path = f'{path}{name}{file_format}'
     with open(image_path, 'wb') as image:
         image.write(responce.content)
 
 
-def get_file_format(url):
+def get_file_extention(url):
     url_parse = urlparse(url)
-    file_name = os.path.split(url_parse.path)[1]
-    file_format = os.path.splitext(file_name)[1]
-    return file_format
+    file_name = unquote(os.path.split(url_parse.path)[1])
+    file_extention = os.path.splitext(file_name)[1]
+    return file_extention
 
 
 def fetch_nasa_images(url, api_key, directory):
@@ -95,14 +95,12 @@ def main():
     launch_number = random.randint(1, 100)
     spacex_url = f'https://api.spacexdata.com/v3/launches/{launch_number}'
     directory = 'images/'
-
     os.makedirs(directory, exist_ok=True)
 
     updater = setup_tg_bot(tg_token)
 
     fetch_nasa_images(nasa_url, nasa_key, directory)
     fetch_spacex_launnch_images(spacex_url, directory)
-
     post_images(updater, tg_chat_id, directory)
 
 
