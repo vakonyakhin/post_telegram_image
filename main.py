@@ -24,12 +24,12 @@ def return_text(update, context):
 
 
 def download_image(url, name, path):
-    responce = requests.get(url)
-    responce.raise_for_status()
+    response = requests.get(url)
+    response.raise_for_status()
     file_format = get_file_extention(url)
     image_path = f'{path}{name}{file_format}'
     with open(image_path, 'wb') as image:
-        image.write(responce.content)
+        image.write(response.content)
 
 
 def get_file_extention(url):
@@ -53,7 +53,7 @@ def fetch_nasa_images(url, api_key, directory):
     nasa_content = response.json()
     for image in nasa_content:
         if image['media_type'] == 'image':
-            download_image(image['url'],f'nasa_{image["date"]}', directory)
+            download_image(image['url'], f'nasa_{image["date"]}', directory)
 
 
 def fetch_spacex_launch_images(url, directory):
